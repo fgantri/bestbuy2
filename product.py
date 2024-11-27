@@ -19,6 +19,8 @@ class Product:
         """Setter function for quantity. If quantity reaches 0, deactivates the product."""
         if quantity <= 0:
             self._active = False
+        else:
+            self._active = True
         self._quantity = quantity
 
     def is_active(self):
@@ -45,23 +47,3 @@ class Product:
         """Returns a string that represents the product,
         for example: 'MacBook Air M2, Price: 1450, Quantity: 100'"""
         return f"{self.name}, Price: {self.price}, Quantity: {self.get_quantity()}"
-
-
-def main():
-    """main test function for products class"""
-    bose = Product("Bose QuietComfort Earbuds", price=250, quantity=500)
-    mac = Product("MacBook Air M2", price=1450, quantity=100)
-
-    print(bose.buy(50))
-    print(mac.buy(100))
-    print(mac.is_active())
-
-    print(bose.show())
-    print(mac.show())
-
-    bose.set_quantity(1000)
-    print(bose.show())
-
-
-if __name__ == "__main__":
-    main()
