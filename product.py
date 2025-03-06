@@ -10,6 +10,7 @@ class Product:
         self.price = price
         self._quantity = quantity
         self._active = self._quantity > 0
+        self._promotion = None
 
     def get_quantity(self):
         """Getter function for quantity :returns the quantity (float)."""
@@ -34,6 +35,14 @@ class Product:
     def deactivate(self):
         """Deactivates the product."""
         self._active = False
+    
+    def get_promotion(self):
+        """Getter function for promotion."""
+        return self._promotion
+    
+    def set_promotion(self, promotion):
+        """Setter function for promotion."""
+        self._promotion = promotion
 
     def buy(self, quantity):
         """Buys a given quantity of the product :returns the total price (float) of the purchase."""
@@ -41,12 +50,18 @@ class Product:
         if quantity_after_sale < 0:
             raise Exception(f"Not enough {self.name} in stock! only {self.get_quantity()} left.")
         self.set_quantity(quantity_after_sale)
-        return self.price * quantity
+        
+        # Apply promotion if available
+        if self._promotion:
+            return self._promotion.apply_promotion(self, quantity)
+        else:
+            return self.price * quantity
 
     def show(self):
         """Returns a string that represents the product,
         for example: 'MacBook Air M2, Price: 1450, Quantity: 100'"""
-        return f"{self.name}, Price: {self.price}, Quantity: {self.get_quantity()}"
+        promotion_str = f", Promotion: {self._promotion.name}" if self._promotion else ""
+        return f"{self.name}, Price: {self.price}, Quantity: {self.get_quantity()}{promotion_str}"
 
 
 class LimitedProduct(Product):
@@ -63,12 +78,18 @@ class LimitedProduct(Product):
                                 for limited_product in LimitedProduct.instances])
         if quantity > ordered_quantity:
             raise Exception(f"Only {self._maximum} is allowed from this {self.name}!")
-        return super().buy(quantity)
+        
+        # Apply promotion if available
+        if self._promotion:
+            return self._promotion.apply_promotion(self, quantity)
+        else:
+            return super().buy(quantity)
 
     def show(self):
         """Returns a string that represents the product,
         for example: 'Shipping, Price: $10, Limited to 1 per order!'"""
-        return f"{self.name}, Price: ${self.price}, Limited to {self._maximum} per order!"
+        promotion_str = f", Promotion: {self._promotion.name}" if self._promotion else ""
+        return f"{self.name}, Price: ${self.price}, Limited to {self._maximum} per order!{promotion_str}"
 
 
 class NonStockedProduct(Product):
@@ -78,9 +99,14 @@ class NonStockedProduct(Product):
         self._active = True
 
     def buy(self, quantity):
-        return self.price * quantity
+        # Apply promotion if available
+        if self._promotion:
+            return self._promotion.apply_promotion(self, quantity)
+        else:
+            return self.price * quantity
 
     def show(self):
         """Returns a string that represents the product,
         for example: 'MacBook Air M2, Price: 1450, Quantity: Unlimited'"""
-        return f"{self.name}, Price: {self.price}, Quantity: Unlimited"
+        promotion_str = f", Promotion: {self._promotion.name}" if self._promotion else ""
+        return f"{self.name}, Price: {self.price}, Quantity: Unlimited{promotion_str}"
