@@ -55,6 +55,42 @@ The application uses several object-oriented design patterns:
 - **Factory Method** - Store setup uses a factory method to create products and promotions
 - **Composition** - Products have promotions composed into them
 
+## Testing
+
+The application comes with a comprehensive test suite using Python's `unittest` framework. The tests are organized by component:
+
+- `tests/test_product.py` - Tests for the base Product class
+- `tests/test_product_types.py` - Tests for specialized product types (NonStockedProduct, LimitedProduct)
+- `tests/test_promotions.py` - Tests for the promotion system
+- `tests/test_store.py` - Tests for the Store class functionality
+
+### Running the Tests
+
+To run all tests:
+
+```bash
+python -m tests.run_tests
+```
+
+To run individual test files:
+
+```bash
+python -m unittest tests.test_product
+python -m unittest tests.test_product_types
+python -m unittest tests.test_promotions
+python -m unittest tests.test_store
+```
+
+### Test Design
+
+The tests use the following patterns:
+
+- Each test module focuses on a specific component
+- Test cases use descriptive method names that explain what's being tested
+- Setup methods create common test fixtures
+- Assertions verify expected outcomes
+- Error cases are tested with `assertRaises`
+
 ## Adding New Features
 
 ### Adding a New Product Type
@@ -85,4 +121,3 @@ class NewPromotion(Promotion):
     def apply_promotion(self, product, quantity):
         # Custom price calculation
         return calculated_price
-```

@@ -1,9 +1,15 @@
+"""
+Tests for the different product types (NonStockedProduct, LimitedProduct).
+"""
 import unittest
 from product import Product, NonStockedProduct, LimitedProduct
 
+
 class TestProductTypes(unittest.TestCase):
+    """Test cases for the different product type classes."""
 
     def test_non_stocked_product(self):
+        """Test NonStockedProduct class functionality."""
         # Create a non-stocked product
         windows = NonStockedProduct("Windows License", price=125)
         
@@ -20,6 +26,7 @@ class TestProductTypes(unittest.TestCase):
         self.assertIn("Unlimited", windows.show())
 
     def test_limited_product(self):
+        """Test LimitedProduct with single maximum limit."""
         # Create a limited product with maximum 1
         shipping = LimitedProduct("Shipping", price=10, quantity=100, maximum=1)
         
@@ -36,6 +43,7 @@ class TestProductTypes(unittest.TestCase):
         self.assertIn("Limited to 1", shipping.show())
         
     def test_multiple_limited_products(self):
+        """Test multiple LimitedProduct instances with different maximum limits."""
         # Create two different limited products
         shipping1 = LimitedProduct("Shipping Standard", price=10, quantity=100, maximum=1)
         shipping2 = LimitedProduct("Shipping Express", price=20, quantity=100, maximum=2)
@@ -48,6 +56,7 @@ class TestProductTypes(unittest.TestCase):
         shipping2.buy(2)  # Should work (max 2)
         with self.assertRaises(Exception):
             shipping2.buy(3)  # Should fail (max 2)
+
 
 if __name__ == '__main__':
     unittest.main()
