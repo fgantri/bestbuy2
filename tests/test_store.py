@@ -75,9 +75,9 @@ class TestStore(unittest.TestCase):
         self.assertEqual(total, 2385)
         
         # Verify quantities were reduced appropriately
-        self.assertEqual(self.product1.get_quantity(), 3)  # 5 - 2 = 3
-        self.assertEqual(self.limited_product.get_quantity(), 4)  # 5 - 1 = 4
-        self.assertEqual(self.non_stocked_product.get_quantity(), 0)  # Non-stocked remains 0
+        self.assertEqual(self.product1.quantity, 3)  # 5 - 2 = 3
+        self.assertEqual(self.limited_product.quantity, 4)  # 5 - 1 = 4
+        self.assertEqual(self.non_stocked_product.quantity, 0)  # Non-stocked remains 0
     
     def test_order_fail_limited_product(self):
         """Test order failing due to limited product constraint."""
@@ -87,8 +87,8 @@ class TestStore(unittest.TestCase):
         ]
         
         # Initial quantities
-        initial_macbook_qty = self.product1.get_quantity()
-        initial_shipping_qty = self.limited_product.get_quantity()
+        initial_macbook_qty = self.product1.quantity
+        initial_shipping_qty = self.limited_product.quantity
         
         # Order should fail due to limited product constraint
         with self.assertRaises(Exception) as context:
@@ -98,8 +98,8 @@ class TestStore(unittest.TestCase):
         self.assertIn("Cannot buy more than 1 of Shipping", str(context.exception))
         
         # Verify quantities were not reduced
-        self.assertEqual(self.product1.get_quantity(), initial_macbook_qty)
-        self.assertEqual(self.limited_product.get_quantity(), initial_shipping_qty)
+        self.assertEqual(self.product1.quantity, initial_macbook_qty)
+        self.assertEqual(self.limited_product.quantity, initial_shipping_qty)
     
     def test_order_fail_insufficient_quantity(self):
         """Test order failing due to insufficient quantity."""
@@ -109,8 +109,8 @@ class TestStore(unittest.TestCase):
         ]
         
         # Initial quantities
-        initial_macbook_qty = self.product1.get_quantity()
-        initial_shipping_qty = self.limited_product.get_quantity()
+        initial_macbook_qty = self.product1.quantity
+        initial_shipping_qty = self.limited_product.quantity
         
         # Order should fail due to insufficient quantity
         with self.assertRaises(Exception) as context:
@@ -120,8 +120,8 @@ class TestStore(unittest.TestCase):
         self.assertIn("Not enough MacBook in stock", str(context.exception))
         
         # Verify quantities were not reduced
-        self.assertEqual(self.product1.get_quantity(), initial_macbook_qty)
-        self.assertEqual(self.limited_product.get_quantity(), initial_shipping_qty)
+        self.assertEqual(self.product1.quantity, initial_macbook_qty)
+        self.assertEqual(self.limited_product.quantity, initial_shipping_qty)
 
 
 if __name__ == '__main__':

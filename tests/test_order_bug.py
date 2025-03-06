@@ -20,8 +20,8 @@ class TestOrderBugFix(unittest.TestCase):
         store = Store([macbook, shipping])
         
         # Initial quantities
-        initial_macbook_qty = macbook.get_quantity()
-        initial_shipping_qty = shipping.get_quantity()
+        initial_macbook_qty = macbook.quantity
+        initial_shipping_qty = shipping.quantity
         
         # Create a shopping list with valid items and one that exceeds limit
         shopping_list = [
@@ -37,8 +37,8 @@ class TestOrderBugFix(unittest.TestCase):
         self.assertIn("Cannot buy more than 1 of Shipping", str(context.exception))
         
         # Verify that quantities weren't reduced
-        self.assertEqual(macbook.get_quantity(), initial_macbook_qty)
-        self.assertEqual(shipping.get_quantity(), initial_shipping_qty)
+        self.assertEqual(macbook.quantity, initial_macbook_qty)
+        self.assertEqual(shipping.quantity, initial_shipping_qty)
     
     def test_quantities_reduced_on_order_success(self):
         """Test that quantities are properly reduced when an order succeeds."""
@@ -62,8 +62,8 @@ class TestOrderBugFix(unittest.TestCase):
         self.assertEqual(total, 2010)
         
         # Verify quantities were reduced
-        self.assertEqual(macbook.get_quantity(), 3)  # 5 - 2 = 3
-        self.assertEqual(shipping.get_quantity(), 4)  # 5 - 1 = 4
+        self.assertEqual(macbook.quantity, 3)  # 5 - 2 = 3
+        self.assertEqual(shipping.quantity, 4)  # 5 - 1 = 4
 
 
 if __name__ == '__main__':

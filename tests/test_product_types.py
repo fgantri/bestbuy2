@@ -14,13 +14,13 @@ class TestProductTypes(unittest.TestCase):
         windows = NonStockedProduct("Windows License", price=125)
         
         # Verify it has zero quantity but is active
-        self.assertEqual(windows.get_quantity(), 0)
+        self.assertEqual(windows.quantity, 0)
         self.assertTrue(windows.is_active())
         
         # Verify we can buy it without affecting quantity
         price = windows.buy(5)
         self.assertEqual(price, 125 * 5)
-        self.assertEqual(windows.get_quantity(), 0)
+        self.assertEqual(windows.quantity, 0)
         
         # Verify show() displays properly
         self.assertIn("Unlimited", windows.show())
@@ -33,7 +33,7 @@ class TestProductTypes(unittest.TestCase):
         # Verify we can buy within the limit
         price = shipping.buy(1)
         self.assertEqual(price, 10)
-        self.assertEqual(shipping.get_quantity(), 99)
+        self.assertEqual(shipping.quantity, 99)
         
         # Verify we cannot buy more than the maximum
         with self.assertRaises(Exception):

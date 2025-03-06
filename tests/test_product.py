@@ -35,16 +35,16 @@ class TestProduct(unittest.TestCase):
         p1 = Product(name="IPhone 16 Pro Max", price=1150, quantity=10)
         self.assertTrue(p1.is_active())
         
-        p1.set_quantity(0)
+        p1.quantity = 0
         self.assertFalse(p1.is_active())
         
-        p1.set_quantity(-1)
+        p1.quantity = -1
         self.assertFalse(p1.is_active())
         
-        p1.set_quantity(-100)
+        p1.quantity = -100
         self.assertFalse(p1.is_active())
         
-        p1.set_quantity(1)
+        p1.quantity = 1
         self.assertTrue(p1.is_active())
 
     def test_product_purchase(self):

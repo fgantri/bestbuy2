@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Iterator
 from product import Product, NonStockedProduct, LimitedProduct
 
 
@@ -40,7 +40,7 @@ class Store:
         Returns:
             The sum of all product quantities.
         """
-        return sum(product.get_quantity() for product in self._products)
+        return sum(product.quantity for product in self._products)
 
     def get_all_products(self) -> List[Product]:
         """
@@ -49,7 +49,7 @@ class Store:
         Returns:
             List of active products.
         """
-        return [product for product in self._products if product.is_active()]
+        return [product for product in self._products if product.active]
 
     def order(self, shopping_list: List[Tuple[Product, int]]) -> float:
         """
@@ -86,14 +86,14 @@ class Store:
             quantity = order_quantities[name]
             
             # Check if it's a LimitedProduct with quantity > maximum
-            if isinstance(store_product, LimitedProduct) and hasattr(store_product, '_maximum'):
-                if quantity > store_product._maximum:
-                    raise Exception(f"Cannot buy more than {store_product._maximum} of {name} in a single order!")
+            if isinstance(store_product, LimitedProduct):
+                if quantity > store_product.maximum:
+                    raise Exception(f"Cannot buy more than {store_product.maximum} of {name} in a single order!")
             
             # Check if it's a regular product with insufficient quantity
             if not isinstance(store_product, NonStockedProduct):
-                if store_product.get_quantity() < quantity:
-                    raise Exception(f"Not enough {name} in stock! Only {store_product.get_quantity()} left.")
+                if store_product.quantity < quantity:
+                    raise Exception(f"Not enough {name} in stock! Only {store_product.quantity} left.")
         
         # Now process the actual purchase
         total = 0.0
@@ -102,18 +102,68 @@ class Store:
             
             # For non-stocked products, don't reduce quantity
             if isinstance(store_product, NonStockedProduct):
-                if store_product._promotion:
-                    total += store_product._promotion.apply_promotion(store_product, quantity)
+                if store_product.promotion:
+                    total += store_product.promotion.apply_promotion(store_product, quantity)
                 else:
                     total += store_product.price * quantity
             else:
                 # For regular and limited products, reduce quantity and calculate price
-                current_quantity = store_product.get_quantity()
-                store_product.set_quantity(current_quantity - quantity)
-                
-                if store_product._promotion:
-                    total += store_product._promotion.apply_promotion(store_product, quantity)
+                if store_product.promotion:
+                    total += store_product.promotion.apply_promotion(store_product, quantity)
                 else:
                     total += store_product.price * quantity
+                
+                # Reduce quantity after calculating price
+                store_product.quantity = store_product.quantity - quantity
         
         return total
+        
+    def __contains__(self, product: Product) -> bool:
+        """
+        Check if a product exists in the store.
+        
+        Args:
+            product: The product to check.
+            
+        Returns:
+            True if product exists in store, False otherwise.
+        """
+        for store_product in self._products:
+            if store_product.name == product.name:
+                return True
+        return False
+        
+    def __add__(self, other: 'Store') -> 'Store':
+        """
+        Combine two stores into a new store.
+        
+        Args:
+            other: The other store to combine with.
+            
+        Returns:
+            A new store containing products from both stores.
+        """
+        # Create a new store with products from this store
+        new_products = list(self._products)
+        
+        # Add products from other store
+        for product in other._products:
+            found = False
+            for existing_product in new_products:
+                if existing_product.name == product.name:
+                    found = True
+                    break
+            
+            if not found:
+                new_products.append(product)
+                
+        return Store(new_products)
+        
+    def __iter__(self) -> Iterator[Product]:
+        """
+        Create an iterator for the store's products.
+        
+        Returns:
+            An iterator over the products in the store.
+        """
+        return iter(self._products)
