@@ -47,3 +47,40 @@ class Product:
         """Returns a string that represents the product,
         for example: 'MacBook Air M2, Price: 1450, Quantity: 100'"""
         return f"{self.name}, Price: {self.price}, Quantity: {self.get_quantity()}"
+
+
+class LimitedProduct(Product):
+
+    instances = []
+
+    def __init__(self, name, price, quantity, maximum):
+        super().__init__(name, price, quantity)
+        self._maximum = maximum
+        LimitedProduct.instances.append(self)
+
+    def buy(self, quantity):
+        ordered_quantity = sum([limited_product.get_quantity()
+                                for limited_product in LimitedProduct.instances])
+        if quantity > ordered_quantity:
+            raise Exception(f"Only {self._maximum} is allowed from this {self.name}!")
+        return super().buy(quantity)
+
+    def show(self):
+        """Returns a string that represents the product,
+        for example: 'Shipping, Price: $10, Limited to 1 per order!'"""
+        return f"{self.name}, Price: ${self.price}, Limited to {self._maximum} per order!"
+
+
+class NonStockedProduct(Product):
+
+    def __init__(self, name, price):
+        super().__init__(name, price, 0)
+        self._active = True
+
+    def buy(self, quantity):
+        return self.price * quantity
+
+    def show(self):
+        """Returns a string that represents the product,
+        for example: 'MacBook Air M2, Price: 1450, Quantity: Unlimited'"""
+        return f"{self.name}, Price: {self.price}, Quantity: Unlimited"

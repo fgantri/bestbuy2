@@ -1,4 +1,5 @@
-from product import Product
+from product import Product, NonStockedProduct
+
 
 class Store:
 
@@ -26,29 +27,7 @@ class Store:
         """Buys the products and returns the total price of the order."""
         total = 0
         for product, quantity in shopping_list:
-            for i_product in self.get_all_products():
-                if i_product.name == product.name:
-                    if quantity > i_product.get_quantity():
-                        raise ValueError("Error while making order! Quantity larger than what exists")
-                    i_product.set_quantity(product.get_quantity() - quantity)
-            total += product.price * quantity
+            for i_product in self._products:
+                if product.name == i_product.name:
+                    total += i_product.buy(quantity)
         return total
-
-
-def main():
-    """main test function for store class"""
-    product_list = [Product("MacBook Air M2", price=1450, quantity=100),
-                    Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-                    Product("Google Pixel 7", price=500, quantity=250),
-                    ]
-
-    store = Store(product_list)
-    products = store.get_all_products()
-    print(store.get_total_quantity())
-    print(store.order([(products[0], 1), (products[1], 2)]))
-    for product in products:
-        print(product.get_quantity())
-
-
-if __name__ == "__main__":
-    main()
